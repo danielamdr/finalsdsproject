@@ -265,10 +265,90 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 
 #Arris
 
+```{r}
+#loading libraries
+library(tidyverse)
+library(sf)
+library(htmltools)
+library(geojsonio)
+library(leaflet)
+library(USAboundaries)
+library(maps)
+library(editData)
 
+```
 
+```{r}
+#getting locations of each country
+income_2019 <-new_income_for_world %>%
+  select(country,X2019)
 
+country_locations <- tibble(
+  country= c("Azerbaijan", "Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Central African Republic","Chad","Chile","China","Colombia","Comoros","Democratic Republic of the Congo", "Republic of the Congo","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Ethiopia","Fiji","Finland","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana", "Haiti","Honduras","Hungray","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyz Republic","Lao","Lativa","Lebanon","Lesotho","Liberia","Libya","Lithuania","Luxembourg","North Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Island","Mauritania","Mauritius","Mexico","Federated States of Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar",
+"Namibia","Togo","France","Argentina", "Armenia", "Australia","Austria","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda","Samoa", "San Marino","Sao Tome and Principe","Saudi Arabia", "Senegal","Serbia","Seychelles", "Sierra Leone", "Singapore", "Slovak Republic", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan","Spain", "Sri Lanka","St. Kitts and Nevis" ,"St.Lucia", "St. Vincent and the Grenadines", "Sudan", "Suriname", "Swaziland", " Syria", "Tajikistan", "Tanzania",
+"Thailand","Timor-Leste", "Togo","Tonga", "Trinidad and Tobago", "Tunisia", "Turkey","Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay","Uzbekistan","Vanuatu","Venezuela","Vietnam","Yemen", "Zambia", "Zimbabwe"))
 
+```
+
+```{r}
+#still getting locations
+country_lat_long <-
+  tmaptools::geocode_OSM(country_locations$country)%>%
+  as_tibble()
+```
+
+```{r}
+#changing column names
+country_lat_long <- country_lat_long %>% 
+  mutate(country = query)%>%
+  select(country,lat,lon)
+```
+
+```{r}
+#joining data sets
+country_lat_long <- country_lat_long %>%
+  left_join(income_2019,by="country")
+```
+
+```{r}
+#leaflet map creation
+  
+basemapC <- leaflet(data = country_lat_long ) %>%
+  setView(-96,37.8,4) %>% # sets the window to a certain size
+  addTiles("MapBox", options = providerTileOptions(
+    id = "mapbox.light",
+    accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN')))
+bins <- c(0,100,300,400,500,600,900,1000,100000,20000,Inf)
+pal <- colorBin("YlOrRd", domain = country_lat_long$X2019, bins = bins)
+labels <- sprintf(
+  "<strong>%s</strong><br/>%g Consumed ",
+  country_lat_long$country, country_lat_long$X2019
+) %>% lapply(htmltools::HTML)
+
+basemapC <-basemapC %>% 
+  addPolygons(
+  fillColor = ~pal(X2019), # fills the bins with color
+  weight = 2,
+  opacity = 1,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.7,
+  highlight = highlightOptions(#for when you hover over
+    weight = 3,
+    color = "grey",
+    dashArray = "",
+    fillOpacity = 0.3,
+    bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto")
+  )
+
+  
+  
+```
 
 
 
