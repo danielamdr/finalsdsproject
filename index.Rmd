@@ -469,7 +469,7 @@ ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation,
 
 
 #Eleni
-#Dealth of children under five years of age per 1000 live births
+#Mortality of children under five years of age per 1000 live births
 
 ```{r}
 child_mortality_rate <- read.csv(file = 'child_mortality_per_1000_born.csv')
@@ -484,9 +484,6 @@ child_mortality <- gather(new_child_mortality, key= "year", value= "mortality_ra
   filter(year <= 2018) %>% 
   mutate(new_year = lubridate::ymd(year, truncated = 2L)) %>% 
   rename(Country = country)
-
-
-
  
 
 ggplot(data = child_mortality, 
