@@ -24,94 +24,41 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 1. No more than 200 words of text
 
 ```{r, echo = FALSE}
+#loading libraries
+
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+
+
 
 ```
 
 
 #Daniela's Section
 
+```{r}
+#getting employment of Togo
 
+employment_rate <- X15plus_employment %>% 
+  filter(country== "Togo" | country== "France") 
+   
 
+new_employment_rate <- gather(employment_rate, key= "year", value= "employment_rate", -country) %>% 
+ mutate(year= as.numeric(year)) %>% 
+  filter(year >= 2008) %>% 
+  filter(year <= 2018) %>% 
+  mutate(new_year = lubridate::ymd(year, truncated = 2L))
 
 
 
+ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rate, color= country)) +
+  geom_line()
+  
+ 
+  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
@@ -285,6 +232,8 @@ View(new_income_for_world)
 
 ```
 
+
+
 ```{r}
 #getting locations of each country
 income_2019 <-new_income_for_world %>%
@@ -316,6 +265,18 @@ country_lat_long <- country_lat_long %>%
 country_lat_long <- country_lat_long %>%
   left_join(income_2019,by="country")
 ```
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r}
 #leaflet map creation
@@ -552,12 +513,7 @@ basemapC <-basemapC %>%
 
 #Eleni
 
-```{r}
-malnutritrion_rate <- read.csv(file = 'malnutrition_weight_for_age_percent_of_children_under_5.csv')
-ggplot(data = malnutritrion_rate, 
-       mapping = aes(x = year, y = country)) +
-  geom_line()
-```
+
 
 
 
