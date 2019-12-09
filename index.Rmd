@@ -278,6 +278,11 @@ library(editData)
 library(sp)
 
 
+library(readr)
+new_income_for_world <- read_csv("new_income_for_world.csv")
+View(new_income_for_world)
+
+
 ```
 
 ```{r}
