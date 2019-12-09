@@ -585,12 +585,17 @@ ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation,
 
 
 #Eleni
+#Child Mortality Rates
 
 ```{r}
-malnutritrion_rate <- read.csv(file = 'malnutrition_weight_for_age_percent_of_children_under_5.csv')
-ggplot(data = malnutritrion_rate, 
-       mapping = aes(x = year, y = country)) +
-  geom_line()
+child_mortality_rate <- read.csv(file = 'child_mortality_per_1000_born.csv')
+
+child_mortality_rate <- child_mortality_rate %>% 
+  mutate(new_year = lubridate::ymd(child_mortality_rate$year, truncated = 2L))
+
+ggplot(data = child_mortality_rate) + geom_line(aes(x=new_year,y=france_rate),color='red') + 
+           geom_line(aes(x=new_year,y=togo_rate),color='blue') + 
+           ylab('Rate')+xlab('Year')
 ```
 
 
