@@ -365,7 +365,7 @@ basemapC <- leaflet(data = USA_sf ) %>%
 bins <- c(0,100,300,400,500,600,900,1000,100000,20000,Inf)
 pal <- colorBin("YlOrRd", domain = USA_sf$income, bins = bins)
 labels <- sprintf(
-  "<strong>%s</strong><br/>%g Consumed ",
+  "<strong>%s</strong><br/>%g Income ",
   USA_sf$country, USA_sf$income
 ) %>% lapply(htmltools::HTML)
 
