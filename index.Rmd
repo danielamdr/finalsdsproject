@@ -552,7 +552,12 @@ basemapC <-basemapC %>%
 
 #Eleni
 
-
+```{r}
+malnutritrion_rate <- read.csv(file = 'malnutrition_weight_for_age_percent_of_children_under_5.csv')
+ggplot(data = malnutritrion_rate, 
+       mapping = aes(x = year, y = country)) +
+  geom_line()
+```
 
 
 
