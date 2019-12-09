@@ -58,10 +58,12 @@ new_employment_rate <- gather (employment_rate, key= "year", value= "employment_
  mutate(year= as.numeric(year)) %>% 
   filter(year >= 2008) %>% 
   filter(year <= 2018) %>% 
-  mutate(new_year = lubridate::ymd(year, truncated = 2L))
+  mutate(new_year = lubridate::ymd(year, truncated = 2L)) %>% 
+  rename(Country = country)
 
 
-ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rate, color= country)) +
+
+ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rate, color= Country)) +
   geom_line() +
   labs(title= "Employment Rate of Togo and France", subtitle = "2008-2018", x= "Year", y= "Employment Rate")+
   scale_color_manual(values = c("darkblue","Forestgreen"))
@@ -511,12 +513,15 @@ child_mortality <- gather(new_child_mortality, key= "year", value= "mortality_ra
   mutate(year = str_replace_all(year, "X", "")) %>% 
   mutate(year= as.numeric(year)) %>% 
   filter(year >= 2008) %>% 
-  filter(year <= 2018)  
+  filter(year <= 2018) %>% 
+  mutate(new_year = lubridate::ymd(year, truncated = 2L)) %>% 
+  rename(Country = country)
  
-
-ggplot(data = child_mortality, 
-       mapping = aes(x = year, y = mortality_rate, color = country)) +
-  geom_line() 
+ggplot(data = child_mortality, mapping = aes(x = new_year, y = mortality_rate, color = Country)) +
+  geom_line(size=1.1) + 
+  scale_color_manual(values = c("darkblue", "forestgreen"))+
+  labs(x="Year", y="Mortality per 1000 live births",subtitle = "2008-2018") +
+  ggtitle("Mortality rate of children under five years old in Togo and France")
 ```
 
 
