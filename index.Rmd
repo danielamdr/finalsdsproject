@@ -380,6 +380,13 @@ basemapC <-basemapC %>%
 ```
 
 
+```{r}
+togo_france_sanitation <- overall_sanitation %>%
+  filter(country = "France" | country = "Togo")
+```
+
+
+
 
 ```{r}
 #Sanitation of Togo and France
