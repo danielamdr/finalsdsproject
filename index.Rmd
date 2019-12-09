@@ -24,10 +24,23 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 1. No more than 200 words of text
 
 ```{r, echo = FALSE}
+<<<<<<< HEAD
+=======
+#loading libraries
+
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(tidyr)
+library(readr)
+library(mapview)
+
+>>>>>>> 0b53678329906213132ee6e4b5ab45799041b13b
 
 ```
 
 
+<<<<<<< HEAD
 #Daniela's Section
 
 
@@ -102,10 +115,20 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 
 
 
+=======
+#Daniela's Section!
+#Employment
+#Linegraph
 
+```{r}
 
+#importing data set
 
+X15plus_employment <- read_csv("15plus_employment.csv")
+View(X15plus_employment)
 
+#getting employment of Togo and France
+>>>>>>> 0b53678329906213132ee6e4b5ab45799041b13b
 
 
 
@@ -121,13 +144,26 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 
 
 
+#DaniGetDinero
+#Life-expectancy
+#Mapping?
 
 
+```{r}
 
+#importing data set
 
+life_expectancy_years <- read_csv("life_expectancy_years.csv")
 
+#Wrangle the Countries and Years you want
 
+new_life <- life_expectancy_years 
+  
+TF_life <- gather (new_life, key= "year", value= "life_expectancy", -country) %>% 
+ mutate(year= as.numeric(year)) %>% 
+   filter(year == 2018) 
 
+#getting Polys in order to map
 
 
 
@@ -142,12 +178,14 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 
 
 
+#Actual Mapping Viz
 
 
 
 
 
 
+  
 
 
 
@@ -160,68 +198,7 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
@@ -608,41 +585,30 @@ ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation,
 
 
 #Eleni
-#Child Mortality Rates
+#Mortality of children under five years of age per 1000 live births
 
 ```{r}
 child_mortality_rate <- read.csv(file = 'child_mortality_per_1000_born.csv')
 
-child_mortality_rate <- child_mortality_rate %>% 
-  mutate(new_year = lubridate::ymd(child_mortality_rate$year, truncated = 2L))
+new_child_mortality <- child_mortality_rate %>% 
+  filter(country== "Togo" | country== "France") 
 
-ggplot(data = child_mortality_rate) + geom_line(aes(x=new_year,y=france_rate),color='darkblue') + 
-           geom_line(aes(x=new_year,y=togo_rate),color='forestgreen') + 
-           ylab('Mortality Rate')+xlab('Year')+ggtitle ('Mortality Rate for Togo and France from 2008-2018')
+child_mortality <- gather(new_child_mortality, key= "year", value= "mortality_rate", -country) %>% 
+  mutate(year = str_replace_all(year, "X", "")) %>% 
+  mutate(year= as.numeric(year)) %>% 
+  filter(year >= 2008) %>% 
+  filter(year <= 2018) %>% 
+  mutate(new_year = lubridate::ymd(year, truncated = 2L)) %>% 
+  rename(Country = country)
+ 
 
+ggplot(data = child_mortality, 
+       mapping = aes(x = new_year, y = mortality_rate, color = Country)) +
+  geom_line(size=1.1) + 
+  scale_color_manual(values = c("darkblue", "forestgreen"))+
+  labs(x="Year", y="Mortality per 1000 live births",subtitle = "2008-2018") +
+  ggtitle("Mortality rate of children under five years old in Togo and France")
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
