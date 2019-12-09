@@ -35,10 +35,10 @@ library(tidyr)
 
 
 #Daniela's Section!
-
+#Employment
 
 ```{r}
-#getting employment of Togo
+#getting employment of Togo and France
 
 employment_rate <- X15plus_employment %>% 
   filter(country== "Togo" | country== "France") 
@@ -69,16 +69,29 @@ ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rat
 
 
 
+#DaniGetDinero
+#Life-expectancy
 
 
+```{r}
 
+#Wrangle the Countries and Yyears you want
 
+new_life <- life_expectancy_years %>% 
+  filter(country== "Togo" | country== "France") 
+   
 
+TF_life <- gather (new_life, key= "year", value= "life_expectancy", -country) %>% 
+ mutate(year= as.numeric(year)) %>% 
+   filter(year >= 2008) %>% 
+  filter(year <= 2018) 
 
+#Actual Mapping Viz
 
 
 
 
+  
 
 
 
@@ -91,89 +104,7 @@ ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rat
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
