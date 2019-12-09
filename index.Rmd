@@ -519,8 +519,8 @@ ggplot(data = child_mortality,
        mapping = aes(x = new_year, y = mortality_rate, color = Country)) +
   geom_line(size=1.1) + 
   scale_color_manual(values = c("darkblue", "forestgreen"))+
-  labs(x="Year", y="Mortality per 1000 live births") +
-  ggtitle("Mortality rate of children under five years old per 1000 live births from 2008-2018")
+  labs(x="Year", y="Mortality per 1000 live births",subtitle = "2008-2018") +
+  ggtitle("Mortality rate of children under five years old in Togo and France")
 ```
 
 
