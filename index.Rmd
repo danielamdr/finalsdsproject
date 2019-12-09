@@ -254,23 +254,17 @@ library(maps)
 library(editData)
 library(sp)
 library(tmaptools)
-
 library(raster)
 library(dplyr)
 library(mapview)
-
-
 library(readr)
+
 new_income_for_world <- read_csv("new_income_for_world.csv")
-#View(new_income_for_world)
-
-
+overall_sanitation <- read_csv("overall_sanitation.csv")
 ```
 
 ```{r}
-#getting locations of each country
-income_2019 <-new_income_for_world %>%
-  select(country,X2019)
+
 
 country_locations <- tibble(
   country= c("Azerbaijan", "Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Central African Republic","Chad","Chile","China","Colombia","Comoros","Democratic Republic of the Congo", "Republic of the Congo","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Ethiopia","Fiji","Finland","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana", "Haiti","Honduras","Hungray","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyz Republic","Lao","Lativa","Lebanon","Lesotho","Liberia","Libya","Lithuania","Luxembourg","North Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Island","Mauritania","Mauritius","Mexico","Federated States of Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar",
@@ -284,51 +278,30 @@ country_locations <- tibble(
 country_lat_long <-
   tmaptools::geocode_OSM(country_locations$country)%>%
   as_tibble()
-```
 
-```{r}
 #changing column names
 country_lat_long <- country_lat_long %>% 
   mutate(country = query)
-  
-```
 
-
-```{r}
+new_income <- gather(new_income_for_world, key = "year", value = "income", -country)
 
 new_income <- new_income %>%
-  filter(year == "2019")
-  
-new_income <- gather(income_for_world, key = "year", value = "income", -country)
+  filter(year == "X2019")
 
-```
-
-```{r}
 USA_map <-  maps::map("world", plot = FALSE, fill = TRUE)
 plot(USA_map)
 
 USA_sf <- USA_map %>% 
   sf::st_as_sf(crs = 4326)
 
-```
+USA_sf <- rename(USA_sf, country=ID)
 
-
-```{r}
 #joining data sets
 country_lat_long <- country_lat_long %>%
   left_join(new_income,by="country")
 
-
-
-
-USA_sf <- rename(USA_sf, country=ID)
-
-
 USA_sf <- USA_sf %>%
   left_join(country_lat_long,by = "country")
-
-
-  
 ```
 
 ```{r}
@@ -339,14 +312,12 @@ basemapC <- leaflet(data = USA_sf ) %>%
   addTiles("MapBox", options = providerTileOptions(
     id = "mapbox.light",
     accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN')))
-bins <- c(0,100,300,400,500,600,900,1000,100000,20000,Inf)
-pal <- colorBin("YlOrRd", domain = USA_sf$income, bins = bins)
+bins <- c(0,100,500,600,900,1000,10000,50000,100000,500000)
+pal <- colorBin("PuBuGn", domain = USA_sf$income, bins = bins)
 labels <- sprintf(
   "<strong>%s</strong><br/>%g Income ",
   USA_sf$country, USA_sf$income
 ) %>% lapply(htmltools::HTML)
-
-
 basemapC %>% 
   addPolygons(
   fillColor = ~pal(income), # fills the bins with color
@@ -365,28 +336,26 @@ basemapC %>%
     labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
     textsize = "15px",
-    direction = "auto")
-  )
+    direction = "auto")) %>%
+  addLegend(pal = pal, values = ~density, opacity = 0.7, title = NULL,
+    position = "bottomright")
+
+
 
   
   
 ```
 
 
+
+
+#Sanitation 
 ```{r}
 togo_france_sanitation <- overall_sanitation %>%
   filter(country =="France" | country == "Togo")
-```
-
-
-
-
-```{r}
 #Sanitation of Togo and France
 new_sanitation_rate <- gather(togo_france_sanitation, key= "year", value= "sanitation", -country)
-```
 
-```{r}
 #creating the bar plot
 togo_france_sanitation <- new_sanitation_rate %>%
   filter(year == "2015"  )
