@@ -92,16 +92,30 @@ life_expectancy_years <- read_csv("life_expectancy_years.csv")
 
 #Wrangle the Countries and Years you want
 
-new_life <- life_expectancy_years %>% 
-  filter(country== "Togo" | country== "France") 
-   
-
+new_life <- life_expectancy_years 
+  
 TF_life <- gather (new_life, key= "year", value= "life_expectancy", -country) %>% 
  mutate(year= as.numeric(year)) %>% 
-   filter(year >= 2008) %>% 
-  filter(year <= 2018) 
+   filter(year == 2018) 
+
+#getting Polys in order to map
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #Actual Mapping Viz
+
+
 
 
 
