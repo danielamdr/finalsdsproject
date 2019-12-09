@@ -228,11 +228,16 @@ library(USAboundaries)
 library(maps)
 library(editData)
 library(sp)
+library(tmaptools)
+
+library(raster)
+library(dplyr)
+library(mapview)
 
 
 library(readr)
 new_income_for_world <- read_csv("new_income_for_world.csv")
-View(new_income_for_world)
+#View(new_income_for_world)
 
 ```
 
@@ -260,25 +265,30 @@ country_lat_long <-
 ```{r}
 #changing column names
 country_lat_long <- country_lat_long %>% 
-  mutate(country = query)%>%
-  select(country,lat,lon)
+  mutate(country = query)
+  
 ```
+
+```{r}
+shapename <- read_sf('country_lat_long-point.shp')
+```
+
+```{r}
+
+require(sf)
+shape <- read_sf(dsn = ".", layer = "country_lat_long-point")
+
+
+```
+
+
+
 
 ```{r}
 #joining data sets
 country_lat_long <- country_lat_long %>%
   left_join(income_2019,by="country")
 ```
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -323,10 +333,29 @@ basemapC <-basemapC %>%
 ```
 
 
+```{r}
+togo_france_sanitation <- overall_sanitation %>%
+  filter(country = "France" | country = "Togo")
+```
 
 
 
 
+```{r}
+#Sanitation of Togo and France
+new_sanitation_rate <- gather(togo_france_sanitation, key= "year", value= "sanitation", -country)
+```
+
+```{r}
+#creating the bar plot
+togo_france_sanitation <- new_sanitation_rate %>%
+  filter(year == "2015"  )
+togo_france_sanitation <- togo_france_sanitation %>%
+  mutate(new_year = lubridate::ymd(togo_france_sanitation$year, truncated = 2L))
+
+ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation, fill= country)) + 
+  geom_col() + scale_fill_manual(values=c("#0000ff", "#228b22")) + ggtitle("Overall Access to Sanitation Services") +  labs(y="Sanitation", x = "Country")
+```
 
 
 
@@ -516,8 +545,19 @@ basemapC <-basemapC %>%
 
 
 #Eleni
+#Child Mortality Rates
 
+```{r}
+child_mortality_rate <- read.csv(file = 'child_mortality_per_1000_born.csv')
 
+child_mortality_rate <- child_mortality_rate %>% 
+  mutate(new_year = lubridate::ymd(child_mortality_rate$year, truncated = 2L))
+
+ggplot(data = child_mortality_rate) + geom_line(aes(x=new_year,y=france_rate),color='darkblue') + 
+           geom_line(aes(x=new_year,y=togo_rate),color='forestgreen') + 
+           ylab('Mortality Rate')+xlab('Year')+ggtitle ('Mortality Rate for Togo and France from 2008-2018')
+
+```
 
 
 
