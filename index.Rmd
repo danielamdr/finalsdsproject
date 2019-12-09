@@ -37,7 +37,7 @@ library(maps)
 
 
 #Daniela's Section
-#updated
+#updates
 
 ```{r}
 #getting employment of Togo
