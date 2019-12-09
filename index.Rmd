@@ -29,6 +29,7 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 library(ggplot2)
 library(dplyr)
 library(lubridate)
+library(maps)
 
 
 
@@ -36,6 +37,7 @@ library(lubridate)
 
 
 #Daniela's Section
+
 
 ```{r}
 #getting employment of Togo
