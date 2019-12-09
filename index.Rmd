@@ -24,46 +24,94 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 1. No more than 200 words of text
 
 ```{r, echo = FALSE}
-#loading libraries
-
-library(ggplot2)
-library(dplyr)
-library(lubridate)
-library(tidyr)
 
 ```
 
 
-#Daniela's Section!
-
-
-```{r}
-#getting employment of Togo
-
-employment_rate <- X15plus_employment %>% 
-  filter(country== "Togo" | country== "France") 
-   
-
-new_employment_rate <- gather (employment_rate, key= "year", value= "employment_rate", -country) %>% 
- mutate(year= as.numeric(year)) %>% 
-  filter(year >= 2008) %>% 
-  filter(year <= 2018) %>% 
-  mutate(new_year = lubridate::ymd(year, truncated = 2L))
-
-
-ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rate, color= country)) +
-  geom_line() +
-  labs(title= "Employment Rate of Togo and France", subtitle = "2008-2018", x= "Year", y= "Employment Rate")+
-  scale_color_manual(values = c("darkblue","Forestgreen"))
-  
+#Daniela's Section
 
 
 
 
 
-  
 
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -239,9 +287,8 @@ library(readr)
 new_income_for_world <- read_csv("new_income_for_world.csv")
 #View(new_income_for_world)
 
+
 ```
-
-
 
 ```{r}
 #getting locations of each country
@@ -269,47 +316,63 @@ country_lat_long <- country_lat_long %>%
   
 ```
 
-```{r}
-shapename <- read_sf('country_lat_long-point.shp')
-```
 
 ```{r}
 
-require(sf)
-shape <- read_sf(dsn = ".", layer = "country_lat_long-point")
-
+new_income <- new_income %>%
+  filter(year == "2019")
+  
+new_income <- gather(income_for_world, key = "year", value = "income", -country)
 
 ```
 
+```{r}
+USA_map <-  maps::map("world", plot = FALSE, fill = TRUE)
+plot(USA_map)
 
+USA_sf <- USA_map %>% 
+  sf::st_as_sf(crs = 4326)
+
+```
 
 
 ```{r}
 #joining data sets
 country_lat_long <- country_lat_long %>%
-  left_join(income_2019,by="country")
+  left_join(new_income,by="country")
+
+
+
+
+USA_sf <- rename(USA_sf, country=ID)
+
+
+USA_sf <- USA_sf %>%
+  left_join(country_lat_long,by = "country")
+
+
+  
 ```
-
-
 
 ```{r}
 #leaflet map creation
   
-basemapC <- leaflet(data = country_lat_long ) %>%
+basemapC <- leaflet(data = USA_sf ) %>%
   setView(-96,37.8,4) %>% # sets the window to a certain size
   addTiles("MapBox", options = providerTileOptions(
     id = "mapbox.light",
     accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN')))
 bins <- c(0,100,300,400,500,600,900,1000,100000,20000,Inf)
-pal <- colorBin("YlOrRd", domain = country_lat_long$X2019, bins = bins)
+pal <- colorBin("YlOrRd", domain = USA_sf$income, bins = bins)
 labels <- sprintf(
   "<strong>%s</strong><br/>%g Consumed ",
-  country_lat_long$country, country_lat_long$X2019
+  USA_sf$country, USA_sf$income
 ) %>% lapply(htmltools::HTML)
 
-basemapC <-basemapC %>% 
+
+basemapC %>% 
   addPolygons(
-  fillColor = ~pal(X2019), # fills the bins with color
+  fillColor = ~pal(income), # fills the bins with color
   weight = 2,
   opacity = 1,
   color = "white",
@@ -335,7 +398,7 @@ basemapC <-basemapC %>%
 
 ```{r}
 togo_france_sanitation <- overall_sanitation %>%
-  filter(country = "France" | country = "Togo")
+  filter(country =="France" | country == "Togo")
 ```
 
 
@@ -354,7 +417,7 @@ togo_france_sanitation <- togo_france_sanitation %>%
   mutate(new_year = lubridate::ymd(togo_france_sanitation$year, truncated = 2L))
 
 ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation, fill= country)) + 
-  geom_col() + scale_fill_manual(values=c("#0000ff", "#228b22")) + ggtitle("Overall Access to Sanitation Services") +  labs(y="Sanitation", x = "Country")
+  geom_col() + scale_fill_manual(values=c("#00008b", "#228b22")) + ggtitle("Overall Access to Sanitation Services") +  labs(y="Sanitation", x = "Country")
 ```
 
 
