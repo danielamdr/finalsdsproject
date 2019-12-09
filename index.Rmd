@@ -24,94 +24,46 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 1. No more than 200 words of text
 
 ```{r, echo = FALSE}
+#loading libraries
+
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(tidyr)
 
 ```
 
 
-#Daniela's Section
+#Daniela's Section!
 
 
+```{r}
+#getting employment of Togo
 
+employment_rate <- X15plus_employment %>% 
+  filter(country== "Togo" | country== "France") 
+   
 
+new_employment_rate <- gather (employment_rate, key= "year", value= "employment_rate", -country) %>% 
+ mutate(year= as.numeric(year)) %>% 
+  filter(year >= 2008) %>% 
+  filter(year <= 2018) %>% 
+  mutate(new_year = lubridate::ymd(year, truncated = 2L))
 
 
+ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rate, color= country)) +
+  geom_line() +
+  labs(title= "Employment Rate of Togo and France", subtitle = "2008-2018", x= "Year", y= "Employment Rate")+
+  scale_color_manual(values = c("darkblue","Forestgreen"))
+  
 
 
 
 
 
+  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
@@ -287,8 +239,9 @@ library(readr)
 new_income_for_world <- read_csv("new_income_for_world.csv")
 #View(new_income_for_world)
 
-
 ```
+
+
 
 ```{r}
 #getting locations of each country
