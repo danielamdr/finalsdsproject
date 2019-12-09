@@ -30,14 +30,24 @@ library(ggplot2)
 library(dplyr)
 library(lubridate)
 library(tidyr)
+library(readr)
+library(mapview)
+
 
 ```
 
 
 #Daniela's Section!
 #Employment
+#Linegraph
 
 ```{r}
+
+#importing data set
+
+X15plus_employment <- read_csv("15plus_employment.csv")
+View(X15plus_employment)
+
 #getting employment of Togo and France
 
 employment_rate <- X15plus_employment %>% 
@@ -71,11 +81,16 @@ ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rat
 
 #DaniGetDinero
 #Life-expectancy
+#Mapping?
 
 
 ```{r}
 
-#Wrangle the Countries and Yyears you want
+#importing data set
+
+life_expectancy_years <- read_csv("life_expectancy_years.csv")
+
+#Wrangle the Countries and Years you want
 
 new_life <- life_expectancy_years %>% 
   filter(country== "Togo" | country== "France") 
