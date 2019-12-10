@@ -102,41 +102,62 @@ TF_life <- gather (new_life, key= "year", value= "life_expectancy", -country) %>
 
 #getting Polys in order to map
 
+world_map <-  maps::map("world", plot = FALSE, fill = TRUE)
+plot(world_map)
 
 
+world_sf <- world_map %>% 
+  sf::st_as_sf(crs = 4326)
 
+world_sf <- rename(world_sf, country=ID)
 
-
-
-
-
-
-
-
-
-
+world_sf <- world_sf %>%
+  left_join(TF_life,by = "country")
 
 #Actual Mapping Viz
 
+bins <- c(0,10,20,30,50,60,80,100)
+pal <- colorBin("PuRd", domain = world_sf$life_expectancy, bins = bins)
 
 
+labels <- sprintf(
+  "<strong>%s</strong><br/>%g years ",
+  world_sf$country, world_sf$life_expectancy
+) %>% lapply(htmltools::HTML)
 
-
-
-  
-
-
-
-
-
-
-
-
+leaflet(world_sf) %>%
+  addProviderTiles("MapBox", options = providerTileOptions(
+    id = "mapbox.light",
+    accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN'))) %>%
+  addPolygons(
+  fillColor = ~pal(life_expectancy),
+  weight = 2,
+  opacity = 1,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.7,
+  highlight = highlightOptions(#for when you hover over
+    weight = 3,
+    color = "grey",
+    dashArray = " ",
+    fillOpacity = 0.3,
+    bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto")) %>%
+  addLegend(pal = pal, values = ~life_expectancy, opacity = 0.7, title = "Life Expectancy (in years)",
+    position = "bottomright")
 
 
 
 
 ```
+
+
+
+
 
 
 
@@ -253,7 +274,7 @@ pal <- colorBin("PuBuGn", domain = USA_sf$income, bins = bins)
 
 
 labels <- sprintf(
-  "<strong>%s</strong><br/>%g Consumed ",
+  "<strong>%s</strong><br/>%g dollars ",
   USA_sf$country, USA_sf$income
 ) %>% lapply(htmltools::HTML)
 
@@ -278,13 +299,9 @@ leaflet(USA_sf) %>%
     labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
     textsize = "15px",
-    direction = "auto"))
-
-
-
-
-  
-  
+    direction = "auto")) %>%
+  addLegend(pal = pal, values = ~income, opacity = 0.7, title = "Income (in dollars)",
+    position = "bottomright") 
 ```
 
 
