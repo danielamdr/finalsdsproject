@@ -1,7 +1,7 @@
 ---
-title: "My Final Project"
-author: "Guy Incognito"
-date: "Last updated on `r Sys.Date()`"
+title: "Quality of Life in the World"
+author: "Eleni Partakki, Arris Moise and Daniela Martinez"
+date: "Last updated on Wednesday, December 11, 2019"
 output:
   html_document:
     toc: true
@@ -10,9 +10,6 @@ output:
     df_print: kable
 ---
 
-<!--
-Comments in HTML are like this! 
--->
 
 # SECTION NAME
 
@@ -27,13 +24,24 @@ Write an intro `index.html` page in blog-post style that summarizes your work. I
 #loading libraries
 
 library(ggplot2)
-library(dplyr)
 library(lubridate)
 library(tidyr)
 library(readr)
 library(mapview)
-
-
+library(tidyverse)
+library(sf)
+library(htmltools)
+library(geojsonio)
+library(leaflet)
+library(USAboundaries)
+library(maps)
+library(editData)
+library(sp)
+library(tmaptools)
+library(raster)
+library(dplyr)
+library(mapview)
+library(readr)
 ```
 
 
@@ -41,12 +49,10 @@ library(mapview)
 #Employment
 #Linegraph
 
-```{r}
-
+```{r, echo = FALSE}
 #importing data set
 
 X15plus_employment <- read_csv("15plus_employment.csv")
-View(X15plus_employment)
 
 #getting employment of Togo and France
 
@@ -64,16 +70,9 @@ new_employment_rate <- gather (employment_rate, key= "year", value= "employment_
 
 
 ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rate, color= Country)) +
-  geom_line() +
+  geom_line(size=1) +
   labs(title= "Employment Rate of Togo and France", subtitle = "2008-2018", x= "Year", y= "Employment Rate")+
-  scale_color_manual(values = c("darkblue","Forestgreen"))
-  
-
-
-
-
-
-  
+  scale_color_manual(values = c("blue","Forestgreen"))
 
 ```
 
@@ -86,193 +85,35 @@ ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rat
 #Mapping?
 
 
-```{r}
-
+```{r, echo = FALSE}
 #importing data set
-
 life_expectancy_years <- read_csv("life_expectancy_years.csv")
-
 #Wrangle the Countries and Years you want
-
 new_life <- life_expectancy_years 
   
 TF_life <- gather (new_life, key= "year", value= "life_expectancy", -country) %>% 
  mutate(year= as.numeric(year)) %>% 
    filter(year == 2018) 
-
 #getting Polys in order to map
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+world_map <-  maps::map("world", plot = FALSE, fill = TRUE)
+world_sf <- world_map %>% 
+  sf::st_as_sf(crs = 4326)
+world_sf <- rename(world_sf, country=ID)
+world_sf <- world_sf %>%
+  left_join(TF_life,by = "country")
 #Actual Mapping Viz
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#Arris
-
-```{r}
-#loading libraries
-library(tidyverse)
-library(sf)
-library(htmltools)
-library(geojsonio)
-library(leaflet)
-library(USAboundaries)
-library(maps)
-library(editData)
-library(sp)
-library(tmaptools)
-
-library(raster)
-library(dplyr)
-library(mapview)
-
-
-library(readr)
-new_income_for_world <- read_csv("new_income_for_world.csv")
-#View(new_income_for_world)
-
-```
-
-
-
-```{r}
-#getting locations of each country
-income_2019 <-new_income_for_world %>%
-  select(country,X2019)
-
-country_locations <- tibble(
-  country= c("Azerbaijan", "Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Central African Republic","Chad","Chile","China","Colombia","Comoros","Democratic Republic of the Congo", "Republic of the Congo","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Ethiopia","Fiji","Finland","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana", "Haiti","Honduras","Hungray","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyz Republic","Lao","Lativa","Lebanon","Lesotho","Liberia","Libya","Lithuania","Luxembourg","North Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Island","Mauritania","Mauritius","Mexico","Federated States of Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar",
-"Namibia","Togo","France","Argentina", "Armenia", "Australia","Austria","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda","Samoa", "San Marino","Sao Tome and Principe","Saudi Arabia", "Senegal","Serbia","Seychelles", "Sierra Leone", "Singapore", "Slovak Republic", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan","Spain", "Sri Lanka","St. Kitts and Nevis" ,"St.Lucia", "St. Vincent and the Grenadines", "Sudan", "Suriname", "Swaziland", " Syria", "Tajikistan", "Tanzania",
-"Thailand","Timor-Leste", "Togo","Tonga", "Trinidad and Tobago", "Tunisia", "Turkey","Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay","Uzbekistan","Vanuatu","Venezuela","Vietnam","Yemen", "Zambia", "Zimbabwe"))
-
-```
-
-```{r}
-#still getting locations
-country_lat_long <-
-  tmaptools::geocode_OSM(country_locations$country)%>%
-  as_tibble()
-```
-
-```{r}
-#changing column names
-country_lat_long <- country_lat_long %>% 
-  mutate(country = query)
-  
-```
-
-```{r}
-shapename <- read_sf('country_lat_long-point.shp')
-```
-
-```{r}
-
-require(sf)
-shape <- read_sf(dsn = ".", layer = "country_lat_long-point")
-
-
-```
-
-
-
-
-```{r}
-#joining data sets
-country_lat_long <- country_lat_long %>%
-  left_join(income_2019,by="country")
-```
-
-
-
-```{r}
-#leaflet map creation
-  
-basemapC <- leaflet(data = country_lat_long ) %>%
-  setView(-96,37.8,4) %>% # sets the window to a certain size
-  addTiles("MapBox", options = providerTileOptions(
-    id = "mapbox.light",
-    accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN')))
-bins <- c(0,100,300,400,500,600,900,1000,100000,20000,Inf)
-pal <- colorBin("YlOrRd", domain = country_lat_long$X2019, bins = bins)
+bins <- c(0,10,20,30,50,60,80,100)
+pal <- colorBin("PuRd", domain = world_sf$life_expectancy, bins = bins)
 labels <- sprintf(
-  "<strong>%s</strong><br/>%g Consumed ",
-  country_lat_long$country, country_lat_long$X2019
+  "<strong>%s</strong><br/>%g years ",
+  world_sf$country, world_sf$life_expectancy
 ) %>% lapply(htmltools::HTML)
-
-basemapC <-basemapC %>% 
+leaflet(world_sf) %>%
+  addProviderTiles("MapBox", options = providerTileOptions(
+    id = "mapbox.light",
+    accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN'))) %>%
   addPolygons(
-  fillColor = ~pal(X2019), # fills the bins with color
+  fillColor = ~pal(life_expectancy),
   weight = 2,
   opacity = 1,
   color = "white",
@@ -281,35 +122,123 @@ basemapC <-basemapC %>%
   highlight = highlightOptions(#for when you hover over
     weight = 3,
     color = "grey",
-    dashArray = "",
+    dashArray = " ",
     fillOpacity = 0.3,
     bringToFront = TRUE),
     label = labels,
     labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
     textsize = "15px",
-    direction = "auto")
-  )
-
-  
-  
+    direction = "auto")) %>%
+  addLegend(pal = pal, values = ~life_expectancy, opacity = 0.7, title = "Life Expectancy (in years)",
+    position = "bottomright")
 ```
 
 
 
-```{r}
+
+
+
+```{r, echo = FALSE}
+new_income_for_world <- read_csv("new_income_for_world.csv")
+
+
+#getting locations of each country
+country_locations <- tibble(
+  country= c("Azerbaijan", "Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Central African Republic","Chad","Chile","China","Colombia","Comoros","Democratic Republic of the Congo", "Republic of the Congo","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Ethiopia","Fiji","Finland","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana", "Haiti","Honduras","Hungray","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyz Republic","Lao","Lativa","Lebanon","Lesotho","Liberia","Libya","Lithuania","Luxembourg","North Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Island","Mauritania","Mauritius","Mexico","Federated States of Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar",
+"Namibia","Togo","France","Argentina", "Armenia", "Australia","Austria","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda","Samoa", "San Marino","Sao Tome and Principe","Saudi Arabia", "Senegal","Serbia","Seychelles", "Sierra Leone", "Singapore", "Slovak Republic", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan","Spain", "Sri Lanka","St. Kitts and Nevis" ,"St.Lucia", "St. Vincent and the Grenadines", "Sudan", "Suriname", "Swaziland", " Syria", "Tajikistan", "Tanzania",
+"Thailand","Timor-Leste", "Togo","Tonga", "Trinidad and Tobago", "Tunisia", "Turkey","Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay","Uzbekistan","Vanuatu","Venezuela","Vietnam","Yemen", "Zambia", "Zimbabwe"))
+```
+
+
+```{r, echo = FALSE, cache=TRUE}
+#leaflet map creation
+country_lat_long <-
+  tmaptools::geocode_OSM(country_locations$country)%>%
+  as_tibble()
+```
+
+
+```{r, echo = FALSE}
+#changing column names
+country_lat_long <- country_lat_long %>% 
+  mutate(country = query)
+new_income <- gather(new_income_for_world, key = "year", value = "income", -country)
+new_income <- new_income %>%
+  filter(year == "X2019")
+USA_map <-  maps::map("world", plot = FALSE, fill = TRUE)
+
+USA_sf <- USA_map %>% 
+  sf::st_as_sf(crs = 4326)
+USA_sf <- rename(USA_sf, country=ID)
+#joining data sets
+country_lat_long <- country_lat_long %>%
+  left_join(new_income,by="country")
+USA_sf <- USA_sf %>%
+  left_join(country_lat_long,by = "country")
+bins <- c(0,100,500,600,900,1000,10000,50000,100000,500000)
+pal <- colorBin("PuBuGn", domain = USA_sf$income, bins = bins)
+labels <- sprintf(
+  "<strong>%s</strong><br/>%g dollars ",
+  USA_sf$country, USA_sf$income
+) %>% lapply(htmltools::HTML)
+leaflet(USA_sf) %>%
+  addProviderTiles("MapBox", options = providerTileOptions(
+    id = "mapbox.light",
+    accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN'))) %>%
+  addPolygons(
+  fillColor = ~pal(income),
+  weight = 2,
+  opacity = 1,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.7,
+  highlight = highlightOptions(#for when you hover over
+    weight = 3,
+    color = "grey",
+    dashArray = " ",
+    fillOpacity = 0.3,
+    bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto")) %>%
+  addLegend(pal = pal, values = ~income, opacity = 0.7, title = "Income (in dollars)",
+    position = "bottomright") 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r, echo = FALSE}
 #Sanitation of Togo and France
+overall_sanitation <- read_csv("overall_sanitation.csv")
+togo_france_sanitation <- overall_sanitation %>%
+  filter(country == "Togo" | country == "France" ) 
+  
 new_sanitation_rate <- gather(togo_france_sanitation, key= "year", value= "sanitation", -country)
-```
-
-```{r}
 #creating the bar plot
 togo_france_sanitation <- new_sanitation_rate %>%
   filter(year == "2015"  )
 togo_france_sanitation <- togo_france_sanitation %>%
   mutate(new_year = lubridate::ymd(togo_france_sanitation$year, truncated = 2L))
-
-ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation, fill= country)) + 
+ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation, fill= country, subtitle = 2008-2018)) + 
   geom_col() + scale_fill_manual(values=c("#0000ff", "#228b22")) + ggtitle("Overall Access to Sanitation Services") +  labs(y="Sanitation", x = "Country")
 ```
 
@@ -325,185 +254,10 @@ ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #Eleni
-#Dealth of children under five years of age per 1000 live births
+#Death of children under five years of age per 1000 live births
 
-```{r}
+```{r, echo = FALSE}
 child_mortality_rate <- read.csv(file = 'child_mortality_per_1000_born.csv')
 
 new_child_mortality <- child_mortality_rate %>% 
@@ -519,89 +273,9 @@ child_mortality <- gather(new_child_mortality, key= "year", value= "mortality_ra
  
 ggplot(data = child_mortality, mapping = aes(x = new_year, y = mortality_rate, color = Country)) +
   geom_line(size=1) + 
-  scale_color_manual(values = c("darkblue", "forestgreen"))+
+  scale_color_manual(values = c("blue", "forestgreen"))+
   labs(x="Year", y="Mortality per 1000 live births",subtitle = "2008-2018") +
   ggtitle("Mortality rate of children under five years old in Togo and France")
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
