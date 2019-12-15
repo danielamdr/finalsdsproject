@@ -1,7 +1,7 @@
 ---
 title: "How does Quality of Life vary across the World?"
 author: "Eleni Partakki, Arris Moise and Daniela Martinez"
-date: "Sunday 15 December 2019"
+date: "December 2019"
 output:
   html_document:
     toc: true
@@ -9,9 +9,6 @@ output:
     toc_float: true
     df_print: kable
 ---
-
-
-# EXPLORING THE WHOLE WORLD
 
 # WHY ARE WE DOING THIS?
 
@@ -23,6 +20,9 @@ The first two maps we will show will be of income per person (GDP per capita) an
 
 
 ![](qualityoflife.jpeg){ width=5000px }
+
+^[https://www.mainehomeconnection.com/QualityofLife]
+
 
 
 ```{r, echo = FALSE}
@@ -49,6 +49,7 @@ library(mapview)
 library(readr)
 ```
 
+# EXPLORING THE WHOLE WORLD
 
 ## LIFE EXPECTANCY
 

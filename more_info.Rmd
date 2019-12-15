@@ -1,7 +1,7 @@
 ---
 title: "Further Research"
 author: "Eleni Partakki, Arris Moise and Daniela Martinez"
-date: "Sunday 15 December 2019"
+date: "December 2019"
 output:
   html_document:
     toc: true
@@ -40,13 +40,15 @@ In the following section, we will compare Togo and France. To represent Togo we 
 
 ## OUR HYPOTHESIS
 
-Our hypothesis before coding the data was that Togo will perform a lot worse than France because Togo is still effected by colonialism like the rest of Africa. Colonialism brought disease, corruption, and poverty. The greatest negative impact of colonization was the exploitation of natural resources. The French were able to capitalize off of Togo’s rich land. Togo today is the world’s largest phosphate producer. They also produce limestone, marble, fish, and coffee. In addition, colonialism set a pace for urbanization in Togo. Some of the challenges that are associated with urbanization include the growth of slums and increases in crime in urban centers. The corrupt government has tried to come up with solutions, but they have not been successful in curbing the challenges. The initiation of urbanization also facilitated rural to urban migrations which has resulted in the majority of young people migrating from rural areas to urban areas to look for jobs, leaving family behind. Lastly, poverty is also rampant, both in urban and rural areas. Such levels of poverty were not widespread in the pre-colonial days since typical Togolese tribes would work together as a community to help each other. 
+Our hypothesis before coding the data was that Togo will perform a lot worse than France because Togo is still effected by colonialism like the rest of Africa. Colonialism brought disease, corruption, and poverty. The greatest negative impact of colonization was the exploitation of natural resources. The French were able to capitalize off of Togo’s rich land. Togo today is the world’s largest phosphate producer. They also produce limestone, marble, fish, and coffee. ^[https://en.wikipedia.org/wiki/Togo] In addition, colonialism set a pace for urbanization in Togo. Some of the challenges that are associated with urbanization include the growth of slums and increases in crime in urban centers. The corrupt government has tried to come up with solutions, but they have not been successful in curbing the challenges. The initiation of urbanization also facilitated rural to urban migrations which has resulted in the majority of young people migrating from rural areas to urban areas to look for jobs, leaving family behind. Lastly, poverty is also rampant, both in urban and rural areas. Such levels of poverty were not widespread in the pre-colonial days since typical Togolese tribes would work together as a community to help each other. ^[https://www.cia.gov/library/publications/the-world-factbook/geos/to.html]
+
 
 ## BEFORE YOU CONTINUE
 
 We urge our readers to be more critical of international relations and look at the history of these countries. Not everything is always as it seems. Colonization still impacts countries across the world.
 
 ![](togo and france.jpg){ width=5000px }
+^[https://www.google.com/search?q=togo+and+france&rlz=1C5CHFA_enUS861US862&source=lnms&tbm=isch&sa=X&ved=2ahUKEwikx8bPu7jmAhWImOAKHSdnDkgQ_AUoA3oECBAQBQ&biw=1440&bih=709#imgrc=vrA_4cy1XdURMM:]
 
 ## EMPLOYMENT
 
@@ -75,7 +77,7 @@ new_employment_rate <- gather (employment_rate, key= "year", value= "employment_
 ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rate, color= Country)) +
   geom_line(size=1) +
   labs(title= "Employment Rate of Togo and France", subtitle = "2008-2018", x= "Year", y= "Employment Rate")+
-  scale_color_manual(values = c("forestgreen","blue"))
+  scale_color_manual(values = c("blue","forestgreen"))
 
 ```
 
@@ -136,6 +138,6 @@ After completing our projects, we have realized our hypothesis was not far from 
 
 # CITATION
 
-We have used Gapminder (https://www.gapminder.org/data/) for our project, and have used their indicator data for our project overall. We are bound by the Terms of Use: https://docs.google.com/document/pub?id=1POd-pBMc5vDXAmxrpGjPLaCSDSWuxX6FLQgq5DhlUhM
+We have used Gapminder ^[https://www.gapminder.org/data/] for our project, and have used their indicator data for our project overall. We are bound by the Terms of Use. ^[https://docs.google.com/document/pub?id=1POd-pBMc5vDXAmxrpGjPLaCSDSWuxX6FLQgq5DhlUhM]
 WE HAVE READ, UNDERSTAND AND AGREE TO BE BOUND BY THE TERMS. By accessing or using any Website or Service we also represent that we have the legal authority to accept the Terms on behalf of ourselves.
 
