@@ -1,7 +1,7 @@
 ---
-title: "Quality of Life in the World"
+title: "How does Quality of Life vary across the World?"
 author: "Eleni Partakki, Arris Moise and Daniela Martinez"
-date: "Last updated on Wednesday, December 11, 2019"
+date: "Sunday 15 December 2019"
 output:
   html_document:
     toc: true
@@ -11,14 +11,19 @@ output:
 ---
 
 
-# SECTION NAME
+# EXPLORING THE WHOLE WORLD
 
-## Subsection name
+# WHY ARE WE DOING THIS?
 
-Write an intro `index.html` page in blog-post style that summarizes your work. It should have
+Colonialism in Africa started in the 17th century and came to a halt in the 19th century. The colonizers in Africa were mainly European countries. This analysis starts in a world view then focuses on France, the colonizer, and Togo, the colonized. You may ask: Why Togo and France? We realized that in our studies, we often focused on where we call home or the United States in general instead of learning about other countries. Therefore, we decided to pick a country we did not know much about like Togo and explore the quality of life there in comparison to its colonizer, France.
 
-1. One visualization that best summarizes your work.
-1. No more than 200 words of text
+# HOW ARE WE DOING THIS?
+
+The first two maps we will show will be of income per person (GDP per capita) and life expectancy across the world so that we could get a rough idea of which countries we would like to focus on. Our further analysis is a line graph comparing the French and the Togolese employment rate from 2008-2018, a line graph comparing mortality rates per 1000 births in children under the age of five from 2008-2018 and lastly, there is a bar graph comparing the overall sanitation between the French and Togolese from 2008-2018. 	
+
+
+![](qualityoflife.jpeg){ width=5000px }
+
 
 ```{r, echo = FALSE}
 #loading libraries
@@ -45,44 +50,11 @@ library(readr)
 ```
 
 
-#Daniela's Section!
-#Employment
-#Linegraph
+## LIFE EXPECTANCY
 
-```{r, echo = FALSE}
-#importing data set
-
-X15plus_employment <- read_csv("15plus_employment.csv")
-
-#getting employment of Togo and France
-
-employment_rate <- X15plus_employment %>% 
-  filter(country== "Togo" | country== "France") 
-   
-
-new_employment_rate <- gather (employment_rate, key= "year", value= "employment_rate", -country) %>% 
- mutate(year= as.numeric(year)) %>% 
-  filter(year >= 2008) %>% 
-  filter(year <= 2018) %>% 
-  mutate(new_year = lubridate::ymd(year, truncated = 2L)) %>% 
-  rename(Country = country)
+Life expectancy across the world varies as well. Some of the reasons will be analyzed in our further research, but in order to get a better grasp of the world, we decided that it was a good idea to create another interactive map that would allow users to roam over counties to view the life expectancy. A darker blue represents a higher life expectancy, while a lighter blue represents a lower life expectancy in comparison.
 
 
-
-ggplot(data = new_employment_rate, mapping = aes(x =new_year, y = employment_rate, color= Country)) +
-  geom_line(size=1) +
-  labs(title= "Employment Rate of Togo and France", subtitle = "2008-2018", x= "Year", y= "Employment Rate")+
-  scale_color_manual(values = c("blue","Forestgreen"))
-
-```
-
-
-
-
-
-#DaniGetDinero
-#Life-expectancy
-#Mapping?
 
 
 ```{r, echo = FALSE}
@@ -136,8 +108,9 @@ leaflet(world_sf) %>%
 
 
 
+## INCOME 
 
-
+Income across the world varies drastically to this day, therefore we decided to create an interactive map that would allow users to explore the data on their own. By scrolling over countries, you can see the GDP per capita of the country for 2018. A darker pink represents a higher GDP, while a lighter pink represents a lower GDP in comparison.
 
 ```{r, echo = FALSE}
 new_income_for_world <- read_csv("new_income_for_world.csv")
@@ -208,74 +181,5 @@ leaflet(USA_sf) %>%
     position = "bottomright") 
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r, echo = FALSE}
-#Sanitation of Togo and France
-overall_sanitation <- read_csv("overall_sanitation.csv")
-togo_france_sanitation <- overall_sanitation %>%
-  filter(country == "Togo" | country == "France" ) 
-  
-new_sanitation_rate <- gather(togo_france_sanitation, key= "year", value= "sanitation", -country)
-#creating the bar plot
-togo_france_sanitation <- new_sanitation_rate %>%
-  filter(year == "2015"  )
-togo_france_sanitation <- togo_france_sanitation %>%
-  mutate(new_year = lubridate::ymd(togo_france_sanitation$year, truncated = 2L))
-ggplot(data = togo_france_sanitation, mapping = aes(x = country, y = sanitation, fill= country, subtitle = 2008-2018)) + 
-  geom_col() + scale_fill_manual(values=c("#0000ff", "#228b22")) + ggtitle("Overall Access to Sanitation Services") +  labs(y="Sanitation", x = "Country")
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-#Eleni
-#Death of children under five years of age per 1000 live births
-
-```{r, echo = FALSE}
-child_mortality_rate <- read.csv(file = 'child_mortality_per_1000_born.csv')
-
-new_child_mortality <- child_mortality_rate %>% 
-  filter(country== "Togo" | country== "France") 
-
-child_mortality <- gather(new_child_mortality, key= "year", value= "mortality_rate", -country) %>% 
-  mutate(year = str_replace_all(year, "X", "")) %>% 
-  mutate(year= as.numeric(year)) %>% 
-  filter(year >= 2008) %>% 
-  filter(year <= 2018) %>% 
-  mutate(new_year = lubridate::ymd(year, truncated = 2L)) %>% 
-  rename(Country = country)
- 
-ggplot(data = child_mortality, mapping = aes(x = new_year, y = mortality_rate, color = Country)) +
-  geom_line(size=1) + 
-  scale_color_manual(values = c("blue", "forestgreen"))+
-  labs(x="Year", y="Mortality per 1000 live births",subtitle = "2008-2018") +
-  ggtitle("Mortality rate of children under five years old in Togo and France")
-```
 
 
